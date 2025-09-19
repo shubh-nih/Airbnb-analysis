@@ -8,15 +8,15 @@ import seaborn as sns
 
 st.markdown("<h3 style='text-align: center;color: white; font-size:     50px; font-family: Modern Sans-Serif;'>Airbnb Insights Dashboard</h3>", unsafe_allow_html=True)
 
-class dashboard:
+class Dashboard:
     def __init__(self):
         
         st.sidebar.header("General")
-        self.neighbour_group = st.sidebar.selectbox("Neighbourhood Group", main.df["neighbourhood group"].unique(), index = None, placeholder = "Select Group")
+        self.neighbour_group = st.sidebar.selectbox("Neighbourhood Group", main.df["neighbourhood group"].unique(), placeholder = "Select Group")
         
-        self.neighbourhood = st.sidebar.selectbox("Neighbourhood", main.df["neighbourhood"].unique(), index = None, placeholder = "Select Neighbourhood")
+        self.neighbourhood = st.sidebar.selectbox("Neighbourhood", main.df["neighbourhood"].unique(), placeholder = "Select Neighbourhood")
         
-        self.room_type = st.sidebar.selectbox("Room Type", main.df["room type"].unique(), index = None, placeholder = "Select Room Type")
+        self.room_type = st.sidebar.selectbox("Room Type", main.df["room type"].unique(), placeholder = "Select Room Type")
         
         self.apartment = st.sidebar.checkbox("Only Apartments")
         
@@ -26,7 +26,7 @@ class dashboard:
         
         self.booking = st.sidebar.radio("Instant Bookable?", options = ["Yes", "No"], index = None)
         
-        self.cancel_policy = st.sidebar.selectbox("Cancellation policy", main.df["cancellation_policy"].unique(), index = None, placeholder = "Select Policy")
+        self.cancel_policy = st.sidebar.selectbox("Cancellation policy", main.df["cancellation_policy"].unique(), placeholder = "Select Policy")
 
         st.sidebar.markdown("---")
         st.sidebar.header("Price & Cost")
@@ -42,7 +42,7 @@ class dashboard:
         
         self.availability = st.sidebar.slider("Availability", main.df["availability 365"].min(), main.df["availability 365"].max(), (10, 250))
         
-        self.availability_category = st.sidebar.selectbox("Availability Category", main.df["availability category"].unique(), index = None, placeholder = "Select category")
+        self.availability_category = st.sidebar.selectbox("Availability Category", main.df["availability category"].unique(), placeholder = "Select category")
         
         st.sidebar.markdown("---")
         st.sidebar.header("Reviews & Ratings")
@@ -67,6 +67,12 @@ class dashboard:
             self.filter = st.button("Apply Filter")
         with col2:
             self.reset = st.button("Reset Filter")
+    
+
+    def fetch_data(self):
+        if self.neighbourhood_group:
+            pass
             
 
-object = dashboard()
+obj = Dashboard()
+obj.fetch_data()
