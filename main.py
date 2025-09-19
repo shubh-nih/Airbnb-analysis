@@ -3,11 +3,11 @@ import pandas as pd
 st.set_page_config(layout = 'wide')
 
 @st.cache_data
-def load_data():
-    df = pd.read_excel("cleaned-bnb.xlsx", index_col = 0)
+def load_data(file):
+    df = pd.read_excel(file, index_col = 0)
     return df
 
-df = load_data()
+df = load_data("cleaned-bnb.xlsx")
 
 home = st.Page("1-home.py", title="Home - Airbnb")
 dashboard = st.Page("2-dashboard.py", title="Dashboard - Airbnb")
