@@ -127,8 +127,7 @@ class Dashboard:
         
         self.availability_category = st.sidebar.selectbox(
             "Availability Category", 
-            ["All"] + list(main.df["availability category"].unique()),
-            index=0
+            ["All"] + list(main.df[main.df["neighbourhood group"] == self.neighbour_group]["availability category"].unique())
         )
         
         col1, col2 = st.sidebar.columns(2)
@@ -202,19 +201,19 @@ class Dashboard:
     def handle_button_clicks(self, general_filter, general_reset, host_filter, host_reset, price_filter, price_reset, stay_filter, stay_reset, review_filter, review_reset, location_filter, location_reset):
         
         if general_filter:
-            pass
+            self.apply_general_filter()
         if general_reset:
             pass
         if host_filter:
-            pass
+            self.apply_host_filter()
         if host_reset:
             pass
         if price_filter:
-            pass
+            self.apply_price_filter()
         if price_reset:
             pass
         if stay_filter:
-            pass
+            self.apply_stay_filter()
         if stay_reset:
             pass
         if review_filter:
@@ -227,9 +226,80 @@ class Dashboard:
             pass
         
     def apply_general_filter(self):
-        filered_data = main.df.copy()
+        filtered_data = main.df.copy()
         if self.neighbour_group != "All":
-            pass
+            filtered_data = filtered_data[filtered_data["neighbourhood group"] == self.neighbour_group]
+        if self.neighbourhood != "All":
+            filtered_data = filtered_data[filtered_data["neighbourhood"] == self.neighbourhood]
+        if self.room_type != "All":
+            filtered_data = filtered_data[filtered_data["room type"] == self.room_type]
+        if self.apartment:
+            filtered_data = filtered_data[filtered_data["is_apartment"] == True]
+
+        st.session_state.filtered_data = filtered_data
+        st.session_state.filters_applied = True
+        st.success(f"General filters applied! {len(filtered_data)} listings found.")    
+
+    def apply_host_filter(self):
+        filtered_data = st.session_state.filtered_data.copy()
+        if self.host != "All":
+            if self.host == "Yes":
+                verified_host = "verified"
+                filtered_data = filtered_data[filtered_data["host_identity_verified"] == verified_host]
+            elif self.host == "No":
+                verified_host = "unconfirmed"
+                filtered_data = filtered_data[filtered_data["host_identity_verified"] == verified_host]
+        if self.booking != "All":
+            if self.booking == "Yes":
+                instant = True
+                filtered_data = filtered_data[filtered_data["instant_bookable"] == instant]
+            elif self.booking == "No":
+                instant = False
+                filtered_data = filtered_data[filtered_data["instant_bookable"] == instant]
+        if self.cancel_policy != "All":
+            filtered_data = filtered_data[filtered_data["cancellation_policy"] == self.cancel_policy]
+            
+        st.session_state.filtered_data = filtered_data
+        st.session_state.filters_applied = True
+        st.success(f"Host filters applied! {len(filtered_data)} listings found.")
+    
+    def apply_price_filter(self):
+        filtered_data = st.session_state.filtered_data.copy()  
+        
+        filtered_data = filtered_data[(filtered_data["price"] >= self.price_range[0]) & 
+        (filtered_data["price"] <= self.price_range[1]) &
+        (filtered_data["service fee"] >= self.service_fee_range[0]) & 
+        (filtered_data["service fee"] <= self.service_fee_range[1]) & 
+        (filtered_data["total stay cost"] >= self.stay_range[0]) & 
+        (filtered_data["total stay cost"] <= self.stay_range[1])]
+        
+        st.session_state.filtered_data = filtered_data
+        st.session_state.filters_applied = True
+        st.success(f"Host filters applied! {len(filtered_data)} listings found.")
+            
+    def apply_stay_filter(self):
+        filtered_data = st.session_state.filtered_data.copy()
+        
+        filtered_data = filtered_data[
+            (filtered_data["minimum nights"] >= self.nights[0]) & 
+            (filtered_data["minimum nights"] <= self.nights[1]) &
+            (filtered_data["availability 365"] >= self.availability[0]) & 
+            (filtered_data["availability 365"] <= self.availability[1])
+        ]
+        
+        if self.availability_category != "All":
+            filtered_data = filtered_data[filtered_data["availability category"] == self.availability_category]
+            
+        st.session_state.filtered_data = filtered_data
+        st.session_state.filters_applied = True
+        st.success(f"Stay filters applied! {len(filtered_data)} listings found.")
+        
+        st.dataframe(filtered_data)
+        
+    def apply_review_filter(self):
+        pass
+
+
                     
         
 
